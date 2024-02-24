@@ -88,9 +88,9 @@ public class InstrumentStatusReader
                     ovenOn: Boolean.Parse(XmlWrapper.SelectSingle(node, "OvenOn").InnerText),
                     temperature_Actual: float.Parse(XmlWrapper.SelectSingle(node, "Temperature_Actual").InnerText),
                     temperature_Room: float.Parse(XmlWrapper.SelectSingle(node, "Temperature_Room").InnerText),
-                    maximumTemperatureLimit: float.Parse(XmlWrapper.SelectSingle(node, "maximumTemperatureLimit").InnerText),
+                    maximumTemperatureLimit: float.Parse(XmlWrapper.SelectSingle(node, "MaximumTemperatureLimit").InnerText),
                     valve_Position: Int32.Parse(XmlWrapper.SelectSingle(node, "Valve_Position").InnerText),
-                    valve_Rotations: Int32.Parse(XmlWrapper.SelectSingle(node, "valve_Rotations").InnerText),
+                    valve_Rotations: Int32.Parse(XmlWrapper.SelectSingle(node, "Valve_Rotations").InnerText),
                     buzzer: Boolean.Parse(XmlWrapper.SelectSingle(node, "Buzzer").InnerText)
                 ),
             _ => new BaseCombinedStatus(
@@ -150,9 +150,9 @@ public class InstrumentStatusReader
                     ovenOn: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "OvenOn")),
                     temperature_Actual: float.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Temperature_Actual")),
                     temperature_Room: float.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Temperature_Room")),
-                    maximumTemperatureLimit: float.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "maximumTemperatureLimit")),
+                    maximumTemperatureLimit: float.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "MaximumTemperatureLimit")),
                     valve_Position: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Valve_Position")),
-                    valve_Rotations: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "valve_Rotations")),
+                    valve_Rotations: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Valve_Rotations")),
                     buzzer: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Buzzer"))
                 ),
             _ => new BaseCombinedStatus(
