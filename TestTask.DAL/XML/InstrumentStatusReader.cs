@@ -33,7 +33,6 @@ public class InstrumentStatusReader
     public DeviceStatus ReadDeviceStatus(XmlNode node)
     {
         var moduleCategory = XmlWrapper.SelectSingle(node, "ModuleCategoryID").InnerText;
-        Console.WriteLine(XmlWrapper.SelectSingle(node, "RapidControlStatus").InnerText);
         return new DeviceStatus()
         {
             ModuleCategoryID = moduleCategory,
