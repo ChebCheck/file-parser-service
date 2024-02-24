@@ -14,11 +14,7 @@ public class CombinedPumpStatus : BaseCombinedStatus
     public int Channel { get; set; }
 
     public CombinedPumpStatus(
-        string moduleState,
-        bool isBusy,
-        bool isReady,
-        bool isError,
-        bool keyLock,
+        BaseCombinedStatus baseStatus,
         string mode, 
         int flow, 
         int percentB, 
@@ -28,7 +24,7 @@ public class CombinedPumpStatus : BaseCombinedStatus
         double maximumPressureLimit, 
         int pressure, 
         bool pumpOn, 
-        int channel) : base(moduleState, isBusy, isReady, isError, keyLock)
+        int channel) : base(baseStatus)
     {
         Mode = mode;
         Flow = flow;

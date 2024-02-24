@@ -16,4 +16,13 @@ public class BaseCombinedStatus
         IsError = isError;
         KeyLock = keyLock;
     }
+
+    public BaseCombinedStatus(BaseCombinedStatus status)
+    {
+        ModuleState = status.ModuleState;
+        IsBusy = status.IsBusy;
+        IsReady = status.IsReady;
+        IsError = status.IsError;
+        KeyLock = status.KeyLock;
+    }
 }

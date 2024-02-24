@@ -12,19 +12,15 @@ public class CombinedOvenStatus : BaseCombinedStatus
     public bool Buzzer { get; set; }
 
     public CombinedOvenStatus(
-        string moduleState, 
-        bool isBusy, 
-        bool isReady, 
-        bool isError, 
-        bool keyLock,
-        bool useTemperatureControl, 
-        bool ovenOn, 
-        float temperature_Actual, 
-        float temperature_Room, 
-        float maximumTemperatureLimit, 
-        int valve_Position, 
-        int valve_Rotations, 
-        bool buzzer) : base(moduleState, isBusy, isReady, isError, keyLock)
+        BaseCombinedStatus baseStatus,
+        bool useTemperatureControl,
+        bool ovenOn,
+        float temperature_Actual,
+        float temperature_Room,
+        float maximumTemperatureLimit,
+        int valve_Position,
+        int valve_Rotations,
+        bool buzzer) : base(baseStatus)
     {
         UseTemperatureControl = useTemperatureControl;
         OvenOn = ovenOn;
