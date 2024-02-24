@@ -38,7 +38,7 @@ public class InstrumentStatusReader
         {
             ModuleCategoryID = moduleCategory,
             IndexWithinRole = Int32.Parse(XmlWrapper.SelectSingle(node, "IndexWithinRole").InnerText),
-            RapidControlStatus = null //ReadCombinedStatus(XmlWrapper.SelectSingle(node,"RapidControlStatus"), moduleCategory)
+            RapidControlStatus = ReadCombinedStatus(XmlWrapper.SelectSingle(node,"RapidControlStatus"), moduleCategory)
         };
     }
 
