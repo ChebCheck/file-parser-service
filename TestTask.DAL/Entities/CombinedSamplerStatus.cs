@@ -12,11 +12,7 @@ public class CombinedSamplerStatus : BaseCombinedStatus
     public bool Buzzer { get; set; }
 
     public CombinedSamplerStatus(
-        string moduleState, 
-        bool isBusy, 
-        bool isReady, 
-        bool isError, 
-        bool keyLock,
+        BaseCombinedStatus baseStatus,
         int status,
         string vial,
         int volume,
@@ -24,7 +20,7 @@ public class CombinedSamplerStatus : BaseCombinedStatus
         string rackL,
         string rackR,
         int rackInf,
-        bool buzzer) : base(moduleState, isBusy, isReady, isError, keyLock)
+        bool buzzer) : base(baseStatus)
     {
         Status = status;
         Vial = vial;
