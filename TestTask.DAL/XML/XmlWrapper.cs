@@ -1,6 +1,6 @@
 ﻿using System.Xml;
 
-namespace TestTask.DAL.XML;
+namespace FileParser.XML;
 
 public static class XmlWrapper
 {

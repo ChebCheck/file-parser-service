@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using System.Xml;
-using TestTask.DAL.Entities;
+using FileParser.Entities;
 
-namespace TestTask.DAL.XML;
+namespace FileParser.XML;
 
 public class InstrumentStatusReader
 {

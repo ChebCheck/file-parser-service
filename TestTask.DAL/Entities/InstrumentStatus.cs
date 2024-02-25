@@ -1,4 +1,4 @@
-﻿namespace TestTask.DAL.Entities;
+﻿namespace FileParser.Entities;
 
 public  class InstrumentStatus
 {
