@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System.Text.RegularExpressions;
+using System.Xml;
 using TestTask.DAL.Entities;
 
 namespace TestTask.DAL.XML;
@@ -11,7 +12,6 @@ public class InstrumentStatusReader
     {
         XmlDocument doc = new XmlDocument();
         doc.Load(path);
-        //XmlElement? root = doc.DocumentElement;
         InstrumentStatusNode = doc.DocumentElement;
     }
 
@@ -30,6 +30,11 @@ public class InstrumentStatusReader
         return InstrumentStatusEntity;
     }
 
+    public async Task<InstrumentStatus> ReadAsync()
+    {
+        return await Task.Run(() => Read());
+    }
+
     public DeviceStatus ReadDeviceStatus(XmlNode node)
     {
         var moduleCategory = XmlWrapper.SelectSingle(node, "ModuleCategoryID").InnerText;
@@ -44,55 +49,64 @@ public class InstrumentStatusReader
     public BaseCombinedStatus ReadCombinedStatus(string nodeInnerText, string category)
     {
         var status = new BaseCombinedStatus(
-                moduleState: XmlExtractor.GetValueFromNode(nodeInnerText, "ModuleState"),
-                isBusy: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "IsBusy")),
-                isReady: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "IsReady")),
-                isError: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "IsError")),
-                keyLock: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "KeyLock")));
+                moduleState: ReadNodeFromText(nodeInnerText, "ModuleState"),
+                isBusy: Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsBusy")),
+                isReady: Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsReady")),
+                isError: Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsError")),
+                keyLock: Boolean.Parse(ReadNodeFromText(nodeInnerText, "KeyLock")));
 
         switch(category){
             case "SAMPLER":
                 status = new CombinedSamplerStatus(
                 baseStatus: status,
-                status: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Status")),
-                vial: XmlExtractor.GetValueFromNode(nodeInnerText, "Vial"),
-                volume: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Volume")),
-                maximumInjectionVolume: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "MaximumInjectionVolume")),
-                rackL: XmlExtractor.GetValueFromNode(nodeInnerText, "RackL"),
-                rackR: XmlExtractor.GetValueFromNode(nodeInnerText, "RackR"),
-                rackInf: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "RackInf")),
-                buzzer: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Buzzer")));
+                status: Int32.Parse(ReadNodeFromText(nodeInnerText, "Status")),
+                vial: ReadNodeFromText(nodeInnerText, "Vial"),
+                volume: Int32.Parse(ReadNodeFromText(nodeInnerText, "Volume")),
+                maximumInjectionVolume: Int32.Parse(ReadNodeFromText(nodeInnerText, "MaximumInjectionVolume")),
+                rackL: ReadNodeFromText(nodeInnerText, "RackL"),
+                rackR: ReadNodeFromText(nodeInnerText, "RackR"),
+                rackInf: Int32.Parse(ReadNodeFromText(nodeInnerText, "RackInf")),
+                buzzer: Boolean.Parse(ReadNodeFromText(nodeInnerText, "Buzzer")));
                 break;
             
             case "QUATPUMP":
                 status = new CombinedPumpStatus(
                 baseStatus: status,
-                mode: XmlExtractor.GetValueFromNode(nodeInnerText, "Mode"),
-                flow: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Flow")),
-                percentB: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "PercentB")),
-                percentC: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "PercentC")),
-                percentD: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "PercentD")),
-                minimumPressureLimit: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "MinimumPressureLimit")),
-                maximumPressureLimit: Double.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "MaximumPressureLimit")),
-                pressure: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Pressure")),
-                pumpOn: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "PumpOn")),
-                channel: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Channel")));
+                mode: ReadNodeFromText(nodeInnerText, "Mode"),
+                flow: Int32.Parse(ReadNodeFromText(nodeInnerText, "Flow")),
+                percentB: Int32.Parse(ReadNodeFromText(nodeInnerText, "PercentB")),
+                percentC: Int32.Parse(ReadNodeFromText(nodeInnerText, "PercentC")),
+                percentD: Int32.Parse(ReadNodeFromText(nodeInnerText, "PercentD")),
+                minimumPressureLimit: Int32.Parse(ReadNodeFromText(nodeInnerText, "MinimumPressureLimit")),
+                maximumPressureLimit: Double.Parse(ReadNodeFromText(nodeInnerText, "MaximumPressureLimit")),
+                pressure: Int32.Parse(ReadNodeFromText(nodeInnerText, "Pressure")),
+                pumpOn: Boolean.Parse(ReadNodeFromText(nodeInnerText, "PumpOn")),
+                channel: Int32.Parse(ReadNodeFromText(nodeInnerText, "Channel")));
                 break;
             
             case "COLCOMP":
                 status = new CombinedOvenStatus(
                 baseStatus: status,
-                useTemperatureControl: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "UseTemperatureControl")),
-                ovenOn: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "OvenOn")),
-                temperature_Actual: float.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Temperature_Actual")),
-                temperature_Room: float.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Temperature_Room")),
-                maximumTemperatureLimit: float.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "MaximumTemperatureLimit")),
-                valve_Position: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Valve_Position")),
-                valve_Rotations: Int32.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Valve_Rotations")),
-                buzzer: Boolean.Parse(XmlExtractor.GetValueFromNode(nodeInnerText, "Buzzer")));
+                useTemperatureControl: Boolean.Parse(ReadNodeFromText(nodeInnerText, "UseTemperatureControl")),
+                ovenOn: Boolean.Parse(ReadNodeFromText(nodeInnerText, "OvenOn")),
+                temperature_Actual: float.Parse(ReadNodeFromText(nodeInnerText, "Temperature_Actual")),
+                temperature_Room: float.Parse(ReadNodeFromText(nodeInnerText, "Temperature_Room")),
+                maximumTemperatureLimit: float.Parse(ReadNodeFromText(nodeInnerText, "MaximumTemperatureLimit")),
+                valve_Position: Int32.Parse(ReadNodeFromText(nodeInnerText, "Valve_Position")),
+                valve_Rotations: Int32.Parse(ReadNodeFromText(nodeInnerText, "Valve_Rotations")),
+                buzzer: Boolean.Parse(ReadNodeFromText(nodeInnerText, "Buzzer")));
                 break;
             }
         return status;
     }
 
+    public string ReadNodeFromText(string xmlText, string nodeName)
+    {
+        Console.WriteLine($"[*] Try to extract {nodeName}");
+        Regex regEx = new Regex($@"<{nodeName}>(\S+)</{nodeName}>");
+        string nodeText = regEx.Match(xmlText).Value;
+        int valueLength = nodeText.LastIndexOf('<') - 1 - nodeText.IndexOf('>');
+        Console.WriteLine("[V] Success\n");
+        return nodeText.Substring(nodeText.IndexOf('>') + 1, valueLength);
+    }
 }
