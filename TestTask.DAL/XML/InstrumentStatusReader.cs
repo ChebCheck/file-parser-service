@@ -35,7 +35,7 @@ public class InstrumentStatusReader
         return await Task.Run(() => Read());
     }
 
-    public DeviceStatus ReadDeviceStatus(XmlNode node)
+    private DeviceStatus ReadDeviceStatus(XmlNode node)
     {
         var moduleCategory = XmlWrapper.SelectSingle(node, "ModuleCategoryID").InnerText;
         return new DeviceStatus()
@@ -46,7 +46,7 @@ public class InstrumentStatusReader
         };
     }
 
-    public BaseCombinedStatus ReadCombinedStatus(string nodeInnerText, string category)
+    private BaseCombinedStatus ReadCombinedStatus(string nodeInnerText, string category)
     {
         var status = new BaseCombinedStatus(
                 moduleState: ReadNodeFromText(nodeInnerText, "ModuleState"),
@@ -100,7 +100,7 @@ public class InstrumentStatusReader
         return status;
     }
 
-    public string ReadNodeFromText(string xmlText, string nodeName)
+    private string ReadNodeFromText(string xmlText, string nodeName)
     {
         Console.WriteLine($"[*] Try to extract {nodeName}");
         Regex regEx = new Regex($@"<{nodeName}>(\S+)</{nodeName}>");
