@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 namespace FileParser.DI;
 public static class ServiceRegister
 {
-    public static void AddContracts(this IServiceCollection services, string producerQueueKey)
+    public static void AddServices(this IServiceCollection services, string producerQueueKey)
     {
         services.AddScoped<IStatusReader, InstrumentStatusReader>((provider) => new InstrumentStatusReader("../../../Source/status.xml"));
         services.AddScoped<IStatusService, InstrumentStatusService>();
