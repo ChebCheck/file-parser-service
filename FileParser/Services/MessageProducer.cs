@@ -29,6 +29,7 @@ public class MessageProducer : IMessageBroker
     {
         var body = Encoding.UTF8.GetBytes(json);
         channel.BasicPublish(string.Empty, queueKey, PublishProperties, body);
+        Console.WriteLine("[+] Published");
     }
 
     ~ MessageProducer()
