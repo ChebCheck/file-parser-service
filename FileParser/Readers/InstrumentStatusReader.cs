@@ -15,15 +15,7 @@ public class InstrumentStatusReader : IStatusReader
     {
         _logger = logger;
         XmlDocument doc = new XmlDocument();
-        try 
-        {
-            doc.Load(path);
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex.Message);
-        }
-        
+        doc.Load(path);
         InstrumentStatusNode = doc.DocumentElement;
     }
 
