@@ -1,25 +1,19 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System.Configuration;
 using FileParser.DI;
-using FileParser.Interfaces;
+using Microsoft.Extensions.Hosting;
 
 ServiceCollection services = new ServiceCollection();
-services.AddServices("InstrumentStatus");
+services.AddApplicationServices(ConfigurationManager.AppSettings);
 
 var serviceProvider = services.BuildServiceProvider();
-var instrumentService = serviceProvider.GetRequiredService<IStatusService>();
+var hostedService = serviceProvider.GetRequiredService<BackgroundService>();
 
-CancellationToken token = new CancellationToken();
-Task task = Task.Run(async () =>
-{
-    while (true)
-    {
-        var instrumentStatus = await instrumentService.ReadInstrumentStatusAsync();
-        instrumentService.ChangeModuleState(ref instrumentStatus);
-        instrumentService.PublishInstrumentStatus(instrumentStatus);
-        Thread.Sleep(1000);
-    }
-}, token);
+var tokenSource = new CancellationTokenSource();
+await hostedService.StartAsync(tokenSource.Token);
 
-Console.WriteLine("Pres any key to exit");
+Console.WriteLine("Press any key to exit");
 Console.ReadKey();
-token = new CancellationToken(true);
+
+tokenSource.Cancel();
+tokenSource.Dispose();

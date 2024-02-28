@@ -2,17 +2,28 @@
 using System.Xml;
 using FileParser.Entities;
 using FileParser.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace FileParser.Readers;
 
 public class InstrumentStatusReader : IStatusReader
 {
     private readonly XmlNode? InstrumentStatusNode;
+    private readonly ILogger _logger;
 
-    public InstrumentStatusReader(string path)
+    public InstrumentStatusReader(ILogger<InstrumentStatusReader> logger, string path)
     {
+        _logger = logger;
         XmlDocument doc = new XmlDocument();
-        doc.Load(path);
+        try 
+        {
+            doc.Load(path);
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex.Message);
+        }
+        
         InstrumentStatusNode = doc.DocumentElement;
     }
 
@@ -21,8 +32,8 @@ public class InstrumentStatusReader : IStatusReader
         var InstrumentStatusEntity = new InstrumentStatus();
         if (InstrumentStatusNode != null)
         {
-            InstrumentStatusEntity.PackageID = XmlWrapper.SelectSingle(InstrumentStatusNode, "PackageID").InnerText;
-            var DeviceStatusNodes = XmlWrapper.SelectAny(InstrumentStatusNode, "DeviceStatus");
+            InstrumentStatusEntity.PackageID = SelectSingle(InstrumentStatusNode, "PackageID").InnerText;
+            var DeviceStatusNodes = SelectAny(InstrumentStatusNode, "DeviceStatus");
             foreach (XmlNode node in DeviceStatusNodes)
             {
                 InstrumentStatusEntity.DeviceStatuses.Add(ReadDeviceStatus(node));
@@ -31,30 +42,30 @@ public class InstrumentStatusReader : IStatusReader
         return InstrumentStatusEntity;
     }
 
-    public async Task<InstrumentStatus> ReadAsync()
+    public Task<InstrumentStatus> ReadAsync()
     {
-        return await Task.Run(() => Read());
+        return Task.Run(() => Read());
     }
 
     private DeviceStatus ReadDeviceStatus(XmlNode node)
     {
-        var moduleCategory = XmlWrapper.SelectSingle(node, "ModuleCategoryID").InnerText;
+        var moduleCategory = SelectSingle(node, "ModuleCategoryID").InnerText;
         return new DeviceStatus()
         {
             ModuleCategoryID = moduleCategory,
-            IndexWithinRole = Int32.Parse(XmlWrapper.SelectSingle(node, "IndexWithinRole").InnerText),
-            RapidControlStatus = ReadCombinedStatus(XmlWrapper.SelectSingle(node,"RapidControlStatus").InnerText, moduleCategory)
+            IndexWithinRole = Int32.Parse(SelectSingle(node, "IndexWithinRole").InnerText),
+            RapidControlStatus = ReadCombinedStatus(SelectSingle(node,"RapidControlStatus").InnerText, moduleCategory)
         };
     }
 
     private BaseCombinedStatus ReadCombinedStatus(string nodeInnerText, string category)
     {
-        var status = new BaseCombinedStatus(
-                moduleState: ReadNodeFromText(nodeInnerText, "ModuleState"),
-                isBusy: Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsBusy")),
-                isReady: Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsReady")),
-                isError: Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsError")),
-                keyLock: Boolean.Parse(ReadNodeFromText(nodeInnerText, "KeyLock")));
+        var status = new BaseCombinedStatus() {
+                ModuleState = ReadNodeFromText(nodeInnerText, "ModuleState"),
+                IsBusy = Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsBusy")),
+                IsReady = Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsReady")),
+                IsError = Boolean.Parse(ReadNodeFromText(nodeInnerText, "IsError")),
+                KeyLock = Boolean.Parse(ReadNodeFromText(nodeInnerText, "KeyLock"))};
 
         switch(category){
             case "SAMPLER":
@@ -101,13 +112,37 @@ public class InstrumentStatusReader : IStatusReader
         return status;
     }
 
+    public XmlNode SelectSingle(XmlNode context, string xPath)
+    {
+        _logger.LogInformation($"Trying to read {xPath} from {context.Name}");
+        var result = context.SelectSingleNode(xPath);
+        if (result == null)
+        {
+            throw new Exception();
+        }
+        _logger.LogInformation("Success\n");
+        return result;
+    }
+
+    public XmlNodeList SelectAny(XmlNode context, string xPath)
+    {
+        _logger.LogInformation($"Trying to read {xPath} from {context.Name}");
+        var result = context.SelectNodes(xPath);
+        if (result == null)
+        {
+            throw new Exception();
+        }
+        _logger.LogInformation("Success\n");
+        return result;
+    }
+
     private string ReadNodeFromText(string xmlText, string nodeName)
     {
-        Console.WriteLine($"[*] Try to extract {nodeName}");
+        _logger.LogInformation($"Try to extract {nodeName}");
         Regex regEx = new Regex($@"<{nodeName}>(\S+)</{nodeName}>");
         string nodeText = regEx.Match(xmlText).Value;
         int valueLength = nodeText.LastIndexOf('<') - 1 - nodeText.IndexOf('>');
-        Console.WriteLine("[V] Success\n");
+        _logger.LogInformation("Success\n");
         return nodeText.Substring(nodeText.IndexOf('>') + 1, valueLength);
     }
 }

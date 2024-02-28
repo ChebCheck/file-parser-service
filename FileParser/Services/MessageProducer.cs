@@ -1,40 +1,35 @@
 ﻿using FileParser.Interfaces;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using System.Text;
 
 namespace FileParser.Services;
 
-public class MessageProducer : IMessageBroker
+public class MessageProducer : IMessageBroker, IDisposable
 {
+    private readonly ILogger _logger;
     private readonly IModel channel;
     private readonly IConnection connection;
-    private readonly string queueKey;
-    public ProducerQueueOptions QueueOptions { get; set; }
-    public IBasicProperties? PublishProperties { get; set; }
+    private readonly string queueKey = "InstrumentStatus";
 
-    public MessageProducer(string queueKey, string hostName = "localhost")
+    public MessageProducer(ILogger<MessageProducer> logger, ConnectionFactory factory)
     {
-        QueueOptions = new ProducerQueueOptions();
-        PublishProperties = null;
-
-        var factory = new ConnectionFactory() { HostName = hostName };
         connection = factory.CreateConnection();
         channel = connection.CreateModel();
-        channel.QueueDeclare(queueKey, QueueOptions.durable, QueueOptions.exclusive, QueueOptions.autoDelete, QueueOptions.arguments);
-
-        this.queueKey = queueKey;
+        channel.QueueDeclare(queueKey, false, false, false, null);
+        _logger = logger;
     }
 
     public void Publish(string json)
     {
         var body = Encoding.UTF8.GetBytes(json);
-        channel.BasicPublish(string.Empty, queueKey, PublishProperties, body);
-        Console.WriteLine("[+] Published");
+        channel.BasicPublish(string.Empty, queueKey, null, body);
+        _logger.LogInformation("Published");
     }
 
-    ~ MessageProducer()
+    public void Dispose()
     {
-        channel.Dispose();
-        connection.Dispose();
+        channel.Close();
+        connection.Close();
     }
 }

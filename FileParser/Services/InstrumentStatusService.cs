@@ -15,20 +15,20 @@ public class InstrumentStatusService : IStatusService
         _messageBroker = messageBroker;
     }
 
-    public InstrumentStatus ChangeModuleState(ref InstrumentStatus instrumentStat)
+    public InstrumentStatus ChangeModuleState(ref InstrumentStatus instrumentStatus)
     {
-        foreach(DeviceStatus deviceStat in instrumentStat.DeviceStatuses)
+        foreach(DeviceStatus deviceStat in instrumentStatus.DeviceStatuses)
         {
             deviceStat.RapidControlStatus.ModuleState = new Random().Next(4) switch
             {
                 0 => "Online",
                 1 => "Run",
                 2 => "NotReady",
-                3 => "Offline"
+                _ => "Offline"
             };
         }
 
-        return instrumentStat;
+        return instrumentStatus;
     }
 
     public void PublishInstrumentStatus(InstrumentStatus instrumentStatus)
@@ -37,12 +37,11 @@ public class InstrumentStatusService : IStatusService
         {
             WriteIndented = true
         });
-        Console.WriteLine(json);
         _messageBroker.Publish(json);
     }
 
-    public async Task<InstrumentStatus> ReadInstrumentStatusAsync()
+    public Task<InstrumentStatus> ReadInstrumentStatusAsync()
     {
-        return await _statusReader.ReadAsync();
+        return _statusReader.ReadAsync();
     }
 }
