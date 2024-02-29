@@ -85,12 +85,12 @@ public class InstrumentStatusReader : IStatusReader
                 baseStatus: status,
                 mode: ReadNodeFromText(nodeInnerText, "Mode"),
                 flow: Int32.Parse(ReadNodeFromText(nodeInnerText, "Flow")),
-                percentB: Int32.Parse(ReadNodeFromText(nodeInnerText, "PercentB")),
-                percentC: Int32.Parse(ReadNodeFromText(nodeInnerText, "PercentC")),
-                percentD: Int32.Parse(ReadNodeFromText(nodeInnerText, "PercentD")),
-                minimumPressureLimit: Int32.Parse(ReadNodeFromText(nodeInnerText, "MinimumPressureLimit")),
+                percentB: float.Parse(ReadNodeFromText(nodeInnerText, "PercentB")),
+                percentC: float.Parse(ReadNodeFromText(nodeInnerText, "PercentC")),
+                percentD: float.Parse(ReadNodeFromText(nodeInnerText, "PercentD")),
+                minimumPressureLimit: Double.Parse(ReadNodeFromText(nodeInnerText, "MinimumPressureLimit")),
                 maximumPressureLimit: Double.Parse(ReadNodeFromText(nodeInnerText, "MaximumPressureLimit")),
-                pressure: Int32.Parse(ReadNodeFromText(nodeInnerText, "Pressure")),
+                pressure: Double.Parse(ReadNodeFromText(nodeInnerText, "Pressure")),
                 pumpOn: Boolean.Parse(ReadNodeFromText(nodeInnerText, "PumpOn")),
                 channel: Int32.Parse(ReadNodeFromText(nodeInnerText, "Channel")));
                 break;

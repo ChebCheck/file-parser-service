@@ -12,8 +12,8 @@ var hostedService = serviceProvider.GetRequiredService<BackgroundService>();
 var tokenSource = new CancellationTokenSource();
 await hostedService.StartAsync(tokenSource.Token);
 
-Console.WriteLine("Press any key to exit");
-Console.ReadKey();
+Console.WriteLine("Press any [enter] to exit");
+Console.ReadLine();
 
 tokenSource.Cancel();
 tokenSource.Dispose();
