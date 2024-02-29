@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FileParser.Services;
 
-public class MessageProducer : IMessageBroker, IDisposable
+public class MessageProducer : IMessageBroker
 {
     private readonly ILogger _logger;
     private readonly IModel channel;

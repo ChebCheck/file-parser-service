@@ -14,6 +14,13 @@ public class InstrumentStatusReader : IStatusReader
     public InstrumentStatusReader(ILogger<InstrumentStatusReader> logger, string path)
     {
         _logger = logger;
+
+        if(path == null)
+        {
+            _logger.LogError("Path to source file is null.");
+            throw new ArgumentNullException(nameof(path), "Argument must be not null");
+        }
+
         XmlDocument doc = new XmlDocument();
         doc.Load(path);
         InstrumentStatusNode = doc.DocumentElement;
@@ -110,6 +117,7 @@ public class InstrumentStatusReader : IStatusReader
         var result = context.SelectSingleNode(xPath);
         if (result == null)
         {
+            _logger.LogError($"Node with name '{xPath}' is not found in context {context.Name}");
             throw new Exception();
         }
         _logger.LogInformation("Success\n");
@@ -122,6 +130,7 @@ public class InstrumentStatusReader : IStatusReader
         var result = context.SelectNodes(xPath);
         if (result == null)
         {
+            _logger.LogError($"Nodes with name '{xPath}' are not found in context {context.Name}");
             throw new Exception();
         }
         _logger.LogInformation("Success\n");

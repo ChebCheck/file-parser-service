@@ -21,5 +21,6 @@ public class MainHostedService : BackgroundService
             _service.PublishInstrumentStatus(instrumentStatus);
             await Task.Delay(1000);
         }
+        _service.Dispose();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace FileParser.Interfaces;
 
-public interface IStatusService
+public interface IStatusService : IDisposable
 {
     InstrumentStatus ChangeModuleState(ref InstrumentStatus instrumentStatus);
     Task<InstrumentStatus> ReadInstrumentStatusAsync();

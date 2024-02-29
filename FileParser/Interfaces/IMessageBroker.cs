@@ -1,6 +1,6 @@
 ﻿namespace FileParser.Interfaces;
 
-public interface IMessageBroker
+public interface IMessageBroker : IDisposable
 {
     void Publish(string json);
 }
