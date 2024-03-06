@@ -1,6 +1,5 @@
 ﻿namespace FileParser.Entities;
 
-[Serializable]
 public class CombinedPumpStatus : BaseCombinedStatus
 {
     public string? ModuleState { get; set; }
