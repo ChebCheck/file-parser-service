@@ -47,7 +47,6 @@ public class InstrumentStatusReader : IStatusReader
             }
             deviceStatus.RapidControlStatus = result;
         }
-        stream.Position = 0;
         
         return InstrumentStatusEntity;
     }
@@ -98,7 +97,6 @@ public class InstrumentStatusReader : IStatusReader
                 }
             }
         }
-        stream.Position = 0;
         return null;
     }
 
