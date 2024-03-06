@@ -56,5 +56,6 @@ public class InstrumentStatusService : IStatusService
     public void Dispose()
     {
         _messageBroker.Dispose();
+        _statusReader.Dispose();
     }
 }
