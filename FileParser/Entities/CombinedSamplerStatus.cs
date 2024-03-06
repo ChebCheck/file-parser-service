@@ -1,7 +1,13 @@
 ﻿namespace FileParser.Entities;
 
+[Serializable]
 public class CombinedSamplerStatus : BaseCombinedStatus
 {
+    public string? ModuleState { get; set; }
+    public bool IsBusy { get; set; }
+    public bool IsReady { get; set; }
+    public bool IsError { get; set; }
+    public bool KeyLock { get; set; }
     public int Status { get; set; }
     public string Vial {  get; set; }
     public int Volume { get; set; }
@@ -11,24 +17,5 @@ public class CombinedSamplerStatus : BaseCombinedStatus
     public int RackInf { get; set; }
     public bool Buzzer { get; set; }
 
-    public CombinedSamplerStatus(
-        BaseCombinedStatus baseStatus,
-        int status,
-        string vial,
-        int volume,
-        int maximumInjectionVolume,
-        string rackL,
-        string rackR,
-        int rackInf,
-        bool buzzer) : base(baseStatus)
-    {
-        Status = status;
-        Vial = vial;
-        Volume = volume;
-        MaximumInjectionVolume = maximumInjectionVolume;
-        RackL = rackL;
-        RackR = rackR;
-        RackInf = rackInf;
-        Buzzer = buzzer;
-    }
+    public CombinedSamplerStatus() { }
 }

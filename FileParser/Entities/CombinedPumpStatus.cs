@@ -1,7 +1,13 @@
 ﻿namespace FileParser.Entities;
 
+[Serializable]
 public class CombinedPumpStatus : BaseCombinedStatus
 {
+    public string? ModuleState { get; set; }
+    public bool IsBusy { get; set; }
+    public bool IsReady { get; set; }
+    public bool IsError { get; set; }
+    public bool KeyLock { get; set; }
     public string Mode { get; set; }
     public int Flow { get; set; }
     public float PercentB { get; set; }
@@ -13,29 +19,5 @@ public class CombinedPumpStatus : BaseCombinedStatus
     public bool PumpOn { get; set; }
     public int Channel { get; set; }
 
-
-    public CombinedPumpStatus(
-        BaseCombinedStatus baseStatus,
-        string mode, 
-        int flow,
-        float percentB,
-        float percentC,
-        float percentD, 
-        double minimumPressureLimit, 
-        double maximumPressureLimit, 
-        double pressure, 
-        bool pumpOn, 
-        int channel) : base(baseStatus)
-    {
-        Mode = mode;
-        Flow = flow;
-        PercentB = percentB;
-        PercentC = percentC;
-        PercentD = percentD;
-        MinimumPressureLimit = minimumPressureLimit;
-        MaximumPressureLimit = maximumPressureLimit;
-        Pressure = pressure;
-        PumpOn = pumpOn;
-        Channel = channel;
-    }
+    public CombinedPumpStatus() { }
 }
